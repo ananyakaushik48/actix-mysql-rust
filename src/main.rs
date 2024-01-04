@@ -18,6 +18,11 @@ pub struct Params {
     posts_per_page: Option<u64>,
 }
 
+[#derive(Deserialize, Serialize, Debug, Clone)]
+struct FlashData {
+    kind: String, 
+    message: String,
+}
 
 #[actix_web::main]
 async fn main -> std::io::Result<()>{
@@ -30,9 +35,16 @@ async fn main -> std::io::Result<()>{
     let host = env::var("HOST").expect("HOST is not set in the .env");
     let host = env::var("PORT").expect("PORT is not set in the .env");
     let host = format!("{}:{}",host,port);
-    let conn = sea_orm::Database::connect(&db_url).await.unwrap();
     // database connection
+    let conn = sea_orm::Database::connect(&db_url).await.unwrap();
     // migration
+    Migrator::up(&conn, None).await.unwrap();
+
+    // Configuring the templates
+    let templates = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "templates/**/*")).unwrap();
+
+    // Setting the Application State (Giving context to the data flow across the FE)
+    let state = AppState { templates, conn };
 }
 
 // This function will initialise all the individual services we are offering in the blog application

@@ -59,6 +59,13 @@ async fn main -> std::io::Result<()>{
             .service(fs::Files::new("/static","./static").show_files_listing()) // Using fs files to get the static files (use the static folder)
     });
 
+    server = match listenfd.take_tcp_listener(0)? {
+        Some(listener) => server.listen(listener)?, // Checks if there is a server already running
+        None => server.bind(&server_url)?, // If no server is running it will serve the application on the server_url we defined in the ENV section
+    };
+    println!("Starting server at {}", server_url);
+    server.run().await?;
+    Ok(())
 }
 
 // This function will initialise all the individual services we are offering in the blog application

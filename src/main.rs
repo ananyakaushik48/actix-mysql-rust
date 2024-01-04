@@ -19,10 +19,20 @@ pub struct Params {
     posts_per_page: Option<u64>,
 }
 
-[#derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 struct FlashData {
     kind: String, 
     message: String,
+}
+
+// The main POST route
+#[post("/")]
+async fn create(
+    data: web::Data<AppState>,
+    post_form: web::Form<post::Model>,
+) -> actix_flash::Response<HttpResponse, FlashData>{
+    let conn = &data.conn;
+    let form = post_form.into_inner();
 }
 
 #[actix_web::main]

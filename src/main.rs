@@ -1,7 +1,23 @@
 use actix_web::{
     error,get,middleware,post,web,App,Error,HttpRequest, HttpResponse,HttpServer, Result,
 };
+use serde::{Deserialize, Serialize};
 use std::env;
+use tera::Tera;
+
+// This is the AppState that will maintain all of our views
+#[derive(Debug, Clone)]
+struct AppState{
+    templates: tera::Tera,
+    conn: DatabaseConnection,
+}
+
+// These are the main query Params that we are expecting
+pub struct Params {
+    page: Option<u64>,
+    posts_per_page: Option<u64>,
+}
+
 
 #[actix_web::main]
 async fn main -> std::io::Result<()>{

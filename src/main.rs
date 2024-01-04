@@ -1,3 +1,4 @@
+use actix_files as fs;
 use actix_web::{
     error,get,middleware,post,web,App,Error,HttpRequest, HttpResponse,HttpServer, Result,
 };
@@ -55,7 +56,7 @@ async fn main -> std::io::Result<()>{
             .wrap(middleware::Logger::default()) // Enabling the Logging middleware for the HttpServer
             .wrap(actix_flash::Flash::default()) // actix flash_data
             .configure(init)
-            .service(fs::Files::new("/static","./static").show_files_listing()) // Using fs files to get the static files
+            .service(fs::Files::new("/static","./static").show_files_listing()) // Using fs files to get the static files (use the static folder)
     });
 
 }

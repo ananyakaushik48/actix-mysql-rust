@@ -18,3 +18,19 @@ async fn main -> std::io::Result<()>{
     // database connection
     // migration
 }
+
+// This function will initialise all the individual services we are offering in the blog application
+pub fn init(cfg: &mut web::ServiceConfig){
+    // The list service returns a paginated list of blogs
+    cfg.service(list);
+    // This will 
+    cfg.service(new);
+    // This service will let you create a post and will return the newly created post with its ID
+    cfg.service(create);
+    // This service will fetch the post content with so that it can be updated with the ID
+    cfg.service(edit);
+    // This service will update the post content with the provided ID
+    cfg.service(update);
+    // This service will delete a post with the provided ID
+    cfg.service(delete);
+}

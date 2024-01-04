@@ -45,6 +45,19 @@ async fn main -> std::io::Result<()>{
 
     // Setting the Application State (Giving context to the data flow across the FE)
     let state = AppState { templates, conn };
+
+    // This is basically going to listen to the port were serving the applcation on
+    let mut listenfd = ListenFd::from_env();
+    // Configuring the HttpServer which will serve the project
+    let mut server = HttpServer::new(move || {
+        App::new()
+            .data(state.Clone())
+            .wrap(middleware::Logger::default()) // Enabling the Logging middleware for the HttpServer
+            .wrap(actix_flash::Flash::default()) // actix flash_data
+            .configure(init)
+            .service(fs::Files::new("/static","./static").show_files_listing()) // Using fs files to get the static files
+    });
+
 }
 
 // This function will initialise all the individual services we are offering in the blog application
